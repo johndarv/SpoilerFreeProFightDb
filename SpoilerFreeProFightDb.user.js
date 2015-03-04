@@ -302,8 +302,7 @@ var spoileriseCurrentChampions = function () {
 
 // END OF CHAMPIONS SECTION
 
+// Run the script!
 var tables = arrayise(document.getElementsByTagName('table'));
-
 tables.forEach(spoileriseTableIfNecessary);
-
 spoileriseCurrentChampions();
