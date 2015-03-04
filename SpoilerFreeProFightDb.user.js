@@ -3,7 +3,8 @@
 // @namespace   http://something.org/
 // @description Removes the results from matches listed on http://www.profightdb.com/.
 // @include     http://www.profightdb.com/*
-// @version     1
+// @include     http://profightdb.com/*
+// @version     1.1
 // @grant       none
 // ==/UserScript==
 
@@ -71,7 +72,13 @@ var extractParticipantsFromCardRow = function (row) {
     // get all links in the 4th td
     var losers = arrayise(tds[3].getElementsByTagName('a'));
 
+    // also include any wreslters displayed not as a link
+    winners = winners.concat(arrayise(tds[1].getElementsByTagName('strong')));
+    losers = losers.concat(arrayise(tds[3].getElementsByTagName('strong')));
+
     var participants = [winners, losers];
+
+    console.info(participants);
 
     return participants;
 };
@@ -194,6 +201,18 @@ var checkIfCardTable = function (table) {
     return false;
 };
 
+var checkIfWrestlerTable = function (table) {
+    // @param {Table} table This is a table.
+
+    if (table.rows[0].cells.length === 4) {
+        if (table.rows[0].cells[0].innerHTML == 'card/ date' && table.rows[0].cells[1].innerHTML == 'match' && table.rows[0].cells[2].innerHTML == 'match type') {
+            return true;
+        }
+    }
+
+    return false;
+};
+
 var spoileriseTableIfNecessary = function (table) {
     if (checkIfTopMatchesTable(table)) {
         console.info('top matches table found');
@@ -201,6 +220,10 @@ var spoileriseTableIfNecessary = function (table) {
     }
     else if (checkIfCardTable(table)) {
         console.info('card table found');
+        alterCardTable(table);
+    }
+    else if (checkIfWrestlerTable(table)) {
+        console.info('wreslter table found');
         alterCardTable(table);
     }
 };
